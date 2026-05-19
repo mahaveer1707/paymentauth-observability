@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: paymentauth-deployment
+
+spec:
+  replicas: 3
+
+  selector:
+    matchLabels:
+      app: paymentauth
+
+  template:
+    metadata:
+      labels:
+        app: paymentauth
+
+    spec:
+      containers:
+        - name: paymentauth
+
+          image: paymentauth:latest
+
+          imagePullPolicy: Never
+
+          ports:
+            - containerPort: 8081
+
+          env:
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://otel-collector-service:4318

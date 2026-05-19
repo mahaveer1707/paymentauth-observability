@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: otel-collector-deployment
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: otel-collector
+
+  template:
+    metadata:
+      labels:
+        app: otel-collector
+
+    spec:
+      containers:
+        - name: otel-collector
+
+          image: otel/opentelemetry-collector-contrib:latest
+
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - name: grpc
+              containerPort: 4317
+
+            - name: http
+              containerPort: 4318
+
+            - name: prometheus
+              containerPort: 9464
+
+          command:
+            - "/otelcol-contrib"
+
+          args:
+            - "--config=/etc/otelcol-contrib/otel-collector-config.yaml"
+
+          volumeMounts:
+            - name: otel-config-volume
+              mountPath: /etc/otelcol-contrib
+
+      volumes:
+        - name: otel-config-volume
+
+          configMap:
+            name: otel-collector-config
